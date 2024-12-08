@@ -122,7 +122,7 @@ REG {
 REG {
     cmd = reflex_define.GO,
     func = function(dn, user, headid, args)
-		print("gogogogo", args)
+		print("gogogogogogogogogogogogogogogogo", args)
         local newnode = dagmgr.get(args)
         user:changenode(headid, dn, newnode)
     end

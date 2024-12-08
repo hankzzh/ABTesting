@@ -21,5 +21,5 @@ for r = 1, RUN_TIMES do
     log("--------run finish times", r)
 end
 log("<<<<<<<<<tester end!!!!")
-dagmgr.reload()
+dagmgr.print()
 stat.print()

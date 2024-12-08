@@ -10,9 +10,16 @@ return {
 		["$func"] = {
 			["$go"] = {
 				["$randombyweight"] = {
-					['$node'] = {"buckets"},
+					['$node'] = { "buckets" },
 				}
 			}
 		}
-	}
+	},
+	test = {
+		["$func"] = {
+			["$go"] = {
+				"asdkjfkalsdfj",
+			}
+		}
+	},
 }
