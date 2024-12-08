@@ -13,8 +13,9 @@ function dagnode_meta.new(cfg)
         level = cfg.level,
         ishead = cfg.ishead,
     }
+	-- log("dagnode_meta.new", cfg)
     for _, v in ipairs(action_list) do
-        data[v] = reflex_func.parse(cfg[v])
+        data[v] = reflex_func.parse2val(cfg[v])
     end
 
     return setmetatable(data, dagnode_meta)
