@@ -1,17 +1,32 @@
 local cjson = require "cjson"
 local log = require "util.log"
 
-local config = require "cfg.config"
+local nodecfg = require "cfg.nodecfg"
 local nodes = {}
-local dagmgr = {nodes = {}}
+local dagmgr = {nodes = {}, func = {}}
+local json_files = {"func"}
+
+function dagmgr.print()
+	log("----------------------------------------------------dagmgr.reload:----------------------------------------------------")
+	log(cjson.encode(nodecfg))
+	log("----------------------------------------------------support cmd:------------------------------------------------------")
+	--reflex_func.help()
+	log("----------------------------------------------------------------------------------------------------------------------")
+end
 
 function dagmgr.reload()
+	local reflex_func = require "core.reflex_func"
+	for _, filename in ipairs(json_files) do
+		local path = "cfg." .. filename
+		local jsonpac = require(path)
+		dagmgr[filename] = dagmgr[filename] or {}
+		for k, v in pairs(jsonpac) do
+			dagmgr[filename][k] = reflex_func.parse2val(v)
+		end
+	end
     local newnode = {}
     local dagnode = require "core.dagnode"
-    log("----------------------------------------------------dagmgr.reload:----------------------------------------------------")
-    log(cjson.encode(config))
-    log("----------------------------------------------------------------------------------------------------------------------")
-    for id, node in pairs(config.nodes) do
+	for id, node in pairs(nodecfg.nodes) do
         newnode[id] = dagnode.new(node)
     end
     nodes = newnode
@@ -24,8 +39,9 @@ end
 
 function dagmgr.process(user)
     local node
-    for headid in pairs(config.headid_list) do
+	for headid in pairs(nodecfg.headid_list) do
         node = user:get_cur_node(headid)
+		-- log("ppppp", node)
         node:process(user, headid)
     end
     

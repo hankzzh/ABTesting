@@ -1,0 +1,3 @@
+luarocks/*
+!luarock/Makefile
+bin/

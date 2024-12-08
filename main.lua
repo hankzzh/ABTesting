@@ -4,8 +4,8 @@ local log = require "util.log"
 local dagmgr = require "core.dagmgr"
 local stat = require "util.stat"
 
-local USER_NUM = 1000
-local RUN_TIMES = 10
+local USER_NUM = 2
+local RUN_TIMES = 2
 
 dagmgr.reload()
 log(">>>>>>>>tester begin!!!!")
@@ -21,5 +21,5 @@ for r = 1, RUN_TIMES do
     log("--------run finish times", r)
 end
 log("<<<<<<<<<tester end!!!!")
-dagmgr.reload()
+dagmgr.print()
 stat.print()

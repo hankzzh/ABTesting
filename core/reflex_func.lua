@@ -7,7 +7,16 @@ local rfuncs = {}
 local cmdlist = {}
 
 function rfuncs.register(h)
+	if not h.cmd or not h.cmd.name then
+		log("eeeeeee", h)
+	end
     cmdlist[h.cmd.name] = h
+end
+
+function rfuncs.help()
+	for key, h in pairs(reflex_define) do
+		log(string.format("%s:%s", h.name, h.comment))
+	end
 end
 
 function rfuncs.get(name)
@@ -19,13 +28,13 @@ function rfuncs.get(name)
         return h.func
     end
     return function (dn, user, headid, args)
-        args = rfuncs.parse2val(dn, user, headid, args)
+        args = rfuncs.parse2val(args, dn, user, headid)
         return h.func(dn, user, headid, args)
     end
 end
 
-function rfuncs.parse2val(dn, user, headid, valorcfg)
-    local f = rfuncs.parse(valorcfg)
+function rfuncs.parse2val(args, dn, user, headid)
+	local f = rfuncs.parse(args)
     return f(dn, user, headid)
 end
 
@@ -42,7 +51,7 @@ function rfuncs.parse(valorcfg)
                 -- args = rfuncs.parse(args)
                 -- return f(dn, user, args(dn, user))
             else
-                replacement[name] = rfuncs.parse2val(dn, user, headid, args)
+                replacement[name] = rfuncs.parse2val(args, dn, user, headid)
             end
         end
         return replacement
@@ -52,21 +61,48 @@ end
 local REG = rfuncs.register
 
 REG {
-    cmd = reflex_define.FUNC,
-    func = function(dn, user, headid, args)
-        if #args ~= 3 then
-            return
-        end
-        local cond = rfuncs.parse2val(dn, user, headid, args[1])
-        -- user:log("cond", cond)
-        if cond then
-            -- user:log("cond", 2)
-            return rfuncs.parse2val(dn, user, headid, args[2])
-        else
-            -- user:log("cond", 3)
-            return rfuncs.parse2val(dn, user, headid, args[3])
-        end
-    end
+	cmd = reflex_define.FUNC,
+	func = function(dn, user, headid, args)
+		return rfuncs.parse(args)
+	end
+}
+
+REG {
+	cmd = reflex_define.GET,
+	func = function(dn, user, headid, args)
+		if not args or not next(args) then
+			return
+		end
+		local result
+		for i, key in ipairs(args) do
+			if 1 == i then
+				result = dagmgr[key]
+			else
+				result = result[key]
+			end
+			if not result then
+				return result
+			end
+		end
+		return result
+	end
+}
+
+REG {
+	cmd = reflex_define.NODE,
+	func = function(dn, user, headid, args)
+		if not args or not next(args) then
+			return dn
+		end
+		local result = dn
+		for _, key in ipairs(args) do
+			result = result[key]
+			if not result then
+				return result
+			end
+		end
+		return result
+	end
 }
 
 REG {
@@ -86,14 +122,7 @@ REG {
 REG {
     cmd = reflex_define.GO,
     func = function(dn, user, headid, args)
-        local newnode = dagmgr.get(args)
-        user:changenode(headid, dn, newnode)
-    end
-}
-
-REG {
-    cmd = reflex_define.CFG,
-    func = function(dn, user, headid, args)
+		print("gogogogogogogogogogogogogogogogo", args)
         local newnode = dagmgr.get(args)
         user:changenode(headid, dn, newnode)
     end
@@ -110,7 +139,7 @@ REG {
     cmd = reflex_define.AND,
     func = function(dn, user, headid, args)
         for _, value in ipairs(args) do
-            value = rfuncs.parse2val(dn, user, value)
+			value = rfuncs.parse2val(value, dn, user, headid)
             if not value then
                 return
             end
@@ -123,7 +152,7 @@ REG {
     cmd = reflex_define.OR,
     func = function(dn, user, headid, args)
         for _, value in ipairs(args) do
-            value = rfuncs.parse2val(dn, user, value)
+			value = rfuncs.parse2val(value, dn, user, headid)
             if not value then
                 return true
             end
@@ -137,15 +166,15 @@ REG {
         if #args ~= 3 then
             return
         end
-        local cond = rfuncs.parse2val(dn, user, headid, args[1])
+        local cond = rfuncs.parse2val(args[1], dn, user, headid)
         -- user:log("cond", cond)
         if cond then
             -- user:log("cond", 2)
-            return rfuncs.parse2val(dn, user, headid, args[2])
+            return rfuncs.parse2val(args[2], dn, user, headid)
         else
             -- user:log("cond", 3)
-            return rfuncs.parse2val(dn, user, headid, args[3])
-        end
+			return rfuncs.parse2val(args[3], dn, user, headid)
+		end
     end
 }
 
@@ -190,12 +219,12 @@ REG {
 REG {
     cmd = reflex_define.BTW1,
     func = function(dn, user, headid, args)
-        local val = rfuncs.parse2val(dn, user, headid, args[1])
-        local min = rfuncs.parse2val(dn, user, headid, args[2])
+        local val = rfuncs.parse2val(args[1], dn, user, headid)
+        local min = rfuncs.parse2val(args[2], dn, user, headid)
         if val <= min then
             return false
         end
-        local max = rfuncs.parse2val(dn, user, headid, args[3])
+        local max = rfuncs.parse2val(args[3], dn, user, headid)
         return val < max
     end
 }
@@ -203,12 +232,12 @@ REG {
 REG {
     cmd = reflex_define.BTW2,
     func = function(dn, user, headid, args)
-        local val = rfuncs.parse2val(dn, user, headid, args[1])
-        local min = rfuncs.parse2val(dn, user, headid, args[2])
+        local val = rfuncs.parse2val(args[1], dn, user, headid)
+        local min = rfuncs.parse2val(args[2], dn, user, headid)
         if val < min then
             return false
         end
-        local max = rfuncs.parse2val(dn, user, headid, args[3])
+        local max = rfuncs.parse2val(args[3], dn, user, headid)
         return val < max
     end
 }
@@ -216,12 +245,12 @@ REG {
 REG {
     cmd = reflex_define.BTW3,
     func = function(dn, user, headid, args)
-        local val = rfuncs.parse2val(dn, user, headid, args[1])
-        local min = rfuncs.parse2val(dn, user, headid, args[2])
+        local val = rfuncs.parse2val(args[1], dn, user, headid)
+        local min = rfuncs.parse2val(args[2], dn, user, headid)
         if val <= min then
             return false
         end
-        local max = rfuncs.parse2val(dn, user, headid, args[3])
+        local max = rfuncs.parse2val(args[3], dn, user, headid)
         return val <= max
     end
 }
@@ -229,12 +258,12 @@ REG {
 REG {
     cmd = reflex_define.BTW4,
     func = function(dn, user, headid, args)
-        local val = rfuncs.parse2val(dn, user, headid, args[1])
-        local min = rfuncs.parse2val(dn, user, headid, args[2])
+        local val = rfuncs.parse2val(args[1], dn, user, headid)
+        local min = rfuncs.parse2val(args[2], dn, user, headid)
         if val < min then
             return false
         end
-        local max = rfuncs.parse2val(dn, user, headid, args[3])
+        local max = rfuncs.parse2val(args[3], dn, user, headid)
         return val <= max
     end
 }
