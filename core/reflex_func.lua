@@ -10,6 +10,12 @@ function rfuncs.register(h)
     cmdlist[h.cmd.name] = h
 end
 
+function rfuncs.help()
+	for key, h in pairs(reflex_define) do
+		log(string.format("%s:%s", h.name, h.comment))
+	end
+end
+
 function rfuncs.get(name)
     local h = cmdlist[name]
     if not h then

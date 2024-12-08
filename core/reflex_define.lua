@@ -6,7 +6,7 @@ local reflex_define = {
     NODEFILTER = {name = 'nodefilter', comment = ''},
     RET = {name = 'ret', comment = '返回结果，失败转备用操作'},
     GO = {name = 'go', comment = '跳转到节点，失败赚到备用节点，再次失败转到上层节点/head'},
-    CFG = {name = 'cfg', comment = '取config字段'},
+    GET = {name = 'get', comment = '取任意配置数据活着玩家数据'},
     IF = {name = 'if', comment = '逻辑--条件二选一', selfparse = true},
 
     --return bool

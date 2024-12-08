@@ -1,5 +1,6 @@
 local cjson = require "cjson"
 local log = require "util.log"
+local reflex_func = require "core.reflex_func"
 
 local config = require "cfg.config"
 local nodes = {}
@@ -11,7 +12,9 @@ function dagmgr.reload()
     log("----------------------------------------------------dagmgr.reload:----------------------------------------------------")
     log(cjson.encode(config))
     log("----------------------------------------------------------------------------------------------------------------------")
-    for id, node in pairs(config.nodes) do
+	reflex_func.help
+	log("----------------------------------------------------support cmd:------------------------------------------------------")
+	for id, node in pairs(config.nodes) do
         newnode[id] = dagnode.new(node)
     end
     nodes = newnode
