@@ -1,35 +1,11 @@
 local user_meta = require "faker.user"
 local faker = {}
-
-local bundleIdList = {
-    "com.block.juggle",
-    "com.wedd.juggle",
-}
+local ATTR_NUM = 10
 
 function faker.uid()
     return "uid-"..os.time().."-"..math.random(0xffffffff)
 end
 
-
-function faker.installTime()
-    return tonumber(os.time()) - math.random(0xffff)
-end
-
-function faker.bundleId()
-    return bundleIdList[math.random(#bundleIdList)]
-end
-
-function faker.resVersion()
-    return "3.2.2"
-end
-
-function faker.sdkVersion()
-    return "999.999.999"
-end
-
-function faker.gameWayNum()
-    return ""
-end
 
 function faker.make(num)
     num = num or 1
@@ -37,12 +13,11 @@ function faker.make(num)
     for i = 1, num do
         local req = {
             uid = i,
-            installTime = faker.installTime(),
-            bundleId = faker.bundleId(),
-            resVersion = faker.resVersion(),
-            sdkVersion = faker.sdkVersion(),
-            gameWayNum = faker.gameWayNum(),
+            attr = {},
         }
+        for j = 1, ATTR_NUM do
+            req.attr[i] = math.random(0, 1000)
+        end
         table.insert(lst, user_meta.new(req))
     end
     return lst

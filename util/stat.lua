@@ -30,9 +30,9 @@ function stat.print()
 
     for headid in pairs(heads) do
         for i_times = 1, #counters do
-            local str = ""
+            local str = "|"
             for _, nodeid in ipairs(l) do
-                str = str.."|"..(counters[i_times][headid][nodeid] or 0)
+                str = string.format("%s% 20d|", str, (counters[i_times][headid][nodeid] or 0))
             end
             print(str)
         end

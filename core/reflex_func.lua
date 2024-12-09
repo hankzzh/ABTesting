@@ -6,6 +6,7 @@ local log = require "util.log"
 local rfuncs = {}
 local cmdlist = {}
 
+--执行指令集和中断
 function rfuncs.register(h)
 	if not h.cmd or not h.cmd.name then
 		log("eeeeeee", h)

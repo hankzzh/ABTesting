@@ -1,6 +1,7 @@
 local log = require "util.log"
 local stat = require "util.stat"
 local dagmgr = require "core.dagmgr"
+local tableutil = require "util.table"
 
 local user_meta = {}
 user_meta.__index = user_meta
@@ -9,22 +10,15 @@ user_meta.__index = user_meta
 
 
 function user_meta.new(req)
-    local data = {
-        uid = req.uid,
-        installTime = req.installTime,
-        bundleId = req.bundleId,
-        resVersion = req.resVersion,
-        sdkVersion = req.sdkVersion,
-        gameWayNum = req.gameWayNum,
+    local data = tableutil.deepcopy(req)
 --[[
 {
     [head1_id] = {node_lvl1, node_lvl2, ...},
     [head2_id] = {node_lvl1, node_lvl2, ...},
     ...
 }
-]]        node_list = {},
-    }
-
+]]
+    data.node_list = {}
     return setmetatable(data, user_meta)
 end
 --user_meta.__call = user_meta.init
