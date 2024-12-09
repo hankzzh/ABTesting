@@ -91,6 +91,7 @@ REG {
 REG {
 	cmd = reflex_define.NODE,
 	func = function(dn, user, headid, args)
+        --log("node.......", dn, args)
 		if not args or not next(args) then
 			return dn
 		end
