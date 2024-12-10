@@ -2,46 +2,51 @@ local cjson = require "cjson"
 local log = require "util.log"
 
 local nodes = {}
-local dagmgr = {nodes = {}, func = {}}
-local json_files = {"func"}
+local _package = {}
+local _cache = {}
+local dagmgr = {nodes = {}, _package = _package, _cache = _cache}
 
 function dagmgr.print()
-	log("----------------------------------------------------dagmgr.reload:----------------------------------------------------")
-	log(cjson.encode(dagmgr.nodecfg))
-	log("----------------------------------------------------support fun:------------------------------------------------------")
-	for _, filename in ipairs(json_files) do
-		local path = "cfg." .. filename
-		local jsonpac = require(path)
-		log(cjson.encode(jsonpac))
-	end
+	log("----------------------------------------------------dagmgr.print:----------------------------------------------------")
+	log(cjson.encode(dagmgr._cache))
 	log("----------------------------------------------------support cmd:------------------------------------------------------")
 	local reflex_func = require "core.reflex_func"
 	reflex_func.help()
 	log("----------------------------------------------------------------------------------------------------------------------")
 end
 
-function dagmgr.reload(filename)
-	local file, err = io.open("cfg/"..filename..".json", "r")
-	if err or not file then
-		file = require("cfg."..filename)
-		return file
+function dagmgr.reload(name, path_name_without_ext)
+	if not name or not path_name_without_ext then
+		log("dagmgr.reload param", name, path_name_without_ext)
 	end
-	local content = file:read("*all")
-	print(content)
-	file:close()
-	return cjson.decode(content)
+	local fullname = "cfg/" .. path_name_without_ext..".json"
+	local file, err = io.open(fullname, "r")
+	local content
+	if err or not file then
+		fullname = "cfg." .. string.gsub(path_name_without_ext, "/", ".")
+		content = require(fullname)
+		_cache[name] = cjson.encode(content)
+	else
+		local content = file:read("*all")
+		file:close()
+		_cache[name] = content
+		content = cjson.decode(content)
+	end
+
+	local reflex_func = require "core.reflex_func"
+	_package[name] = reflex_func.parse2val(content)
+	return content
 end
 
 function dagmgr.reload_all()
-	local reflex_func = require "core.reflex_func"
-	for _, filename in ipairs(json_files) do
-		local jsonpac = dagmgr.reload(filename)
-		dagmgr[filename] = dagmgr[filename] or {}
-		for k, v in pairs(jsonpac) do
-			dagmgr[filename][k] = reflex_func.parse2val(v)
-		end
+	dagmgr.nodes = {}
+	dagmgr._package = {}
+	dagmgr._cache = {}
+	log("----------------------------------------------------dagmgr.reload_all----------------------------------------------------")
+	local include = dagmgr.reload("_include", "include")
+	for _, filecfg in ipairs(include) do
+		dagmgr.reload(table.unpack(filecfg))
 	end
-	dagmgr.nodecfg = dagmgr.reload("nodecfg")
 
     local newnode = {}
     local dagnode = require "core.dagnode"
