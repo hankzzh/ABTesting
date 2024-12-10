@@ -6,7 +6,7 @@ local log = require "util.log"
 local rfuncs = {}
 local cmdlist = {}
 
---执行指令集和中断
+--鎵ц鎸囦护闆嗗拰涓柇
 function rfuncs.register(h)
 	if not h.cmd or not h.cmd.name then
 		log("eeeeeee", h)
@@ -16,7 +16,7 @@ end
 
 function rfuncs.help()
 	for key, h in pairs(reflex_define) do
-		log(string.format("%s:%s", h.name, h.comment))
+		log(string.format("%-20s:%s", h.name, h.comment))
 	end
 end
 
@@ -77,7 +77,7 @@ REG {
 		local result
 		for i, key in ipairs(args) do
 			if 1 == i then
-				result = dagmgr[key]
+				result = dagmgr._package[key]
 			else
 				result = result[key]
 			end
