@@ -1,0 +1,85 @@
+{
+    "headid_list": {
+        "head": true
+    },
+    "nodes": {
+        "release": {
+            "enter": {
+                "$get": [
+                    "func",
+                    "enter"
+                ]
+            },
+            "id": "release",
+            "buckets": {
+                "release_1": 250,
+                "release_2": 50
+            },
+            "level": 100
+        },
+        "head": {
+            "id": "head",
+            "enter": {
+                "$get": [
+                    "func",
+                    "headaction"
+                ]
+            },
+            "ishead": true,
+            "level": 0,
+            "process": {
+                "$get": [
+                    "func",
+                    "headaction"
+                ]
+            }
+        },
+        "release_2": {
+            "process": {
+                "$func": [
+                    {
+                        "$go": "release"
+                    }
+                ]
+            },
+            "id": "release_2",
+            "enter": {
+                "$func": [
+                    {
+                        "$ret": {
+                            "$randombyweight": {
+                                "dddddddddddddd": 50,
+                                "i am in release_2": 50
+                            }
+                        }
+                    }
+                ]
+            },
+            "level": 100
+        },
+        "release_1": {
+            "process": {
+                "$func": [
+                    {
+                        "$if": [
+                            false,
+                            {
+                                "$go": "release"
+                            },
+                            "nothing"
+                        ]
+                    }
+                ]
+            },
+            "id": "release_1",
+            "enter": {
+                "$func": [
+                    {
+                        "$ret": "i am in release_1"
+                    }
+                ]
+            },
+            "level": 100
+        }
+    }
+}

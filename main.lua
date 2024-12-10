@@ -4,10 +4,10 @@ local log = require "util.log"
 local dagmgr = require "core.dagmgr"
 local stat = require "util.stat"
 
-local USER_NUM = 2
+local USER_NUM = 10
 local RUN_TIMES = 2
 
-dagmgr.reload()
+dagmgr.reload_all()
 log(">>>>>>>>tester begin!!!!")
 log("begin make faker", {USER_NUM = USER_NUM})
 local userlist = faker.make(USER_NUM)
