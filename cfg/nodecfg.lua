@@ -69,11 +69,11 @@ addnode({
 
 ---------test
 
--- addnode({
---     id = "test",
---     level = 100,
---     enter = {["$ret"] = "i am in test"},
---     process = {["$go"] = "test"},
--- })
+addnode({
+    id = "test",
+    level = 100,
+    enter = {["$func"] = {["$ret"] = "i am in test"}},
+    process = {["$func"] = {["$go"] = "test"}},
+})
 
 return cfg

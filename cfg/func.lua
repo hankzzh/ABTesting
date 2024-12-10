@@ -5,7 +5,7 @@ return {
 	headaction = {
 		["$func"] = {
 			["$go"] = {
-				["$randombyweight"] = {release = 90, test = 0}
+				["$randombyweight"] = {release = 90, test = 90}
 			}
 		}
 	},
