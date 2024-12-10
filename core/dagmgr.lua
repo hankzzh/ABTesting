@@ -9,8 +9,15 @@ local json_files = {"func"}
 function dagmgr.print()
 	log("----------------------------------------------------dagmgr.reload:----------------------------------------------------")
 	log(cjson.encode(nodecfg))
+	log("----------------------------------------------------support fun:------------------------------------------------------")
+	for _, filename in ipairs(json_files) do
+		local path = "cfg." .. filename
+		local jsonpac = require(path)
+		log(cjson.encode(jsonpac))
+	end
 	log("----------------------------------------------------support cmd:------------------------------------------------------")
-	--reflex_func.help()
+	local reflex_func = require "core.reflex_func"
+	reflex_func.help()
 	log("----------------------------------------------------------------------------------------------------------------------")
 end
 
