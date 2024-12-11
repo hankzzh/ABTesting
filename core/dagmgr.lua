@@ -25,23 +25,23 @@ function dagmgr.reload(name, path_name_without_ext)
 	if err or not file then
 		fullname = "cfg." .. string.gsub(path_name_without_ext, "/", ".")
 		content = require(fullname)
-		_cache[name] = cjson.encode(content)
 	else
 		local content = file:read("*all")
 		file:close()
-		_cache[name] = content
 		content = cjson.decode(content)
 	end
 
+	_cache[name] = content
 	local reflex_func = require "core.reflex_func"
 	_package[name] = reflex_func.parse2val(content)
 	return content
 end
 
 function dagmgr.reload_all()
-	dagmgr.nodes = {}
-	dagmgr._package = {}
-	dagmgr._cache = {}
+	_package = {}
+	_cache = {}
+	dagmgr._package = _package
+	dagmgr._cache = _cache
 	log("----------------------------------------------------dagmgr.reload_all----------------------------------------------------")
 	local include = dagmgr.reload("_include", "include")
 	for _, filecfg in ipairs(include) do
@@ -50,7 +50,7 @@ function dagmgr.reload_all()
 
     local newnode = {}
     local dagnode = require "core.dagnode"
-	for id, node in pairs(dagmgr.nodecfg.nodes) do
+	for id, node in pairs(dagmgr._package.nodecfg.nodes) do
         newnode[id] = dagnode.new(node)
     end
     nodes = newnode
@@ -58,14 +58,15 @@ function dagmgr.reload_all()
 end
 
 function dagmgr.get(id)
-    return nodes[id]
+	log("get----------", id, nodes)
+	return nodes[id]
 end
 
 function dagmgr.process(user)
     local node
-	for headid in pairs(dagmgr.nodecfg.headid_list) do
+	for headid in pairs(dagmgr._cache.nodecfg.headid_list) do
         node = user:get_cur_node(headid)
-		-- log("ppppp", node)
+		--log("ppppp", node)
         node:process(user, headid)
     end
     
