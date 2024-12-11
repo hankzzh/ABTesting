@@ -58,7 +58,7 @@ function dagmgr.reload_all()
 end
 
 function dagmgr.get(id)
-	log("get----------", id, nodes)
+	--log("get----------", id, nodes)
 	return nodes[id]
 end
 
@@ -66,7 +66,7 @@ function dagmgr.process(user)
     local node
 	for headid in pairs(dagmgr._cache.nodecfg.headid_list) do
         node = user:get_cur_node(headid)
-		log("ppppp", node)
+		--log("ppppp", node)
         node:process(user, headid)
     end
     

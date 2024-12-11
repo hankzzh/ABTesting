@@ -6,7 +6,7 @@ local log = require "util.log"
 local rfuncs = {}
 local cmdlist = {}
 
---执行指令集和中断
+--
 function rfuncs.register(h)
 	if not h.cmd or not h.cmd.name then
 		log("eeeeeee", h)
@@ -69,7 +69,122 @@ REG {
 }
 
 REG {
+    cmd = reflex_define.FOREACH,
+    func = function(dn, user, headid, args)
+        local param = {['$k'] = 'k', ['$v'] = 'v'}
+        if "table" ~= type(args) or #args < 2 then
+            log("FOREACH err args", args)
+            return
+        end
+        --log("00--argsargsargs---0000", args)
+        local tbl, f = table.unpack(args, 1, 2)
+        local newargs = {}
+        local kv = {}
+        for i = 3, #args do
+            table.insert(newargs, args[i])
+            local key2idx = param[args[i]]
+            if key2idx then
+                kv[key2idx] = i - 2
+            end
+        end
+        --log("00--tbltbltbl---0000", tbl)
+        for k, v in pairs(tbl) do
+            for name, idx in pairs(kv) do
+                if name == 'k' then
+                    newargs[idx] = k
+                elseif name == 'v' then
+                    newargs[idx] = v
+                end
+            end
+            local tf = type(f)
+            --log("00-----0000", {[tf] = newargs})
+            if "functions" == tf then
+                f(dn, user, headid, newargs)
+            elseif "string" == tf then
+                rfuncs.parse2val({[f] = newargs}, dn, user, headid)
+            else
+                log("FOREACH err", args)
+            end
+        end
+    end
+}
+
+REG {
+    cmd = reflex_define.AND,
+    func = function(dn, user, headid, args)
+        for _, value in ipairs(args) do
+			value = rfuncs.parse2val(value, dn, user, headid)
+            if not value then
+                return
+            end
+        end
+        return true
+    end
+}
+
+REG {
+    cmd = reflex_define.OR,
+    func = function(dn, user, headid, args)
+        for _, value in ipairs(args) do
+			value = rfuncs.parse2val(value, dn, user, headid)
+            if not value then
+                return true
+            end
+        end
+    end
+}
+
+REG {
+    cmd = reflex_define.IF,
+    func = function(dn, user, headid, args)
+        if #args ~= 3 then
+            return
+        end
+        local cond = rfuncs.parse2val(args[1], dn, user, headid)
+        -- user:log("cond", cond)
+        if cond then
+            -- user:log("cond", 2)
+            return rfuncs.parse2val(args[2], dn, user, headid)
+        else
+            -- user:log("cond", 3)
+			return rfuncs.parse2val(args[3], dn, user, headid)
+		end
+    end
+}
+
+REG {
+    cmd = reflex_define.NOT,
+    func = function(dn, user, headid, args)
+        if not args then
+            return true
+        end
+        return false
+    end
+}
+
+REG {
 	cmd = reflex_define.GET,
+	func = function(dn, user, headid, args)
+		if not args or not next(args) then
+			return
+		end
+		local result
+		for i, key in ipairs(args) do
+			if 1 == i then
+				result = dagmgr._package[key]
+			else
+				result = result[key]
+			end
+			if not result then
+				return result
+			end
+		end
+		return result
+	end
+}
+
+REG {
+	cmd = reflex_define.SET,
 	func = function(dn, user, headid, args)
 		if not args or not next(args) then
 			return
@@ -124,7 +239,7 @@ REG {
 REG {
     cmd = reflex_define.GO,
     func = function(dn, user, headid, args)
-		print("gogogogogogogogogogogogogogogogo", args)
+		log("gogogogogogogogogogogogogogogogo", args)
         local newnode = dagmgr.get(args)
         user:changenode(headid, dn, newnode)
     end
@@ -133,60 +248,7 @@ REG {
 REG {
     cmd = reflex_define.RET,
     func = function(dn, user, headid, args)
-        user:log("return at node, content add later", dn.id, args)
-    end
-}
-
-REG {
-    cmd = reflex_define.AND,
-    func = function(dn, user, headid, args)
-        for _, value in ipairs(args) do
-			value = rfuncs.parse2val(value, dn, user, headid)
-            if not value then
-                return
-            end
-        end
-        return true
-    end
-}
-
-REG {
-    cmd = reflex_define.OR,
-    func = function(dn, user, headid, args)
-        for _, value in ipairs(args) do
-			value = rfuncs.parse2val(value, dn, user, headid)
-            if not value then
-                return true
-            end
-        end
-    end
-}
-
-REG {
-    cmd = reflex_define.IF,
-    func = function(dn, user, headid, args)
-        if #args ~= 3 then
-            return
-        end
-        local cond = rfuncs.parse2val(args[1], dn, user, headid)
-        -- user:log("cond", cond)
-        if cond then
-            -- user:log("cond", 2)
-            return rfuncs.parse2val(args[2], dn, user, headid)
-        else
-            -- user:log("cond", 3)
-			return rfuncs.parse2val(args[3], dn, user, headid)
-		end
-    end
-}
-
-REG {
-    cmd = reflex_define.NOT,
-    func = function(dn, user, headid, args)
-        if not args then
-            return true
-        end
-        return false
+        log("return at node, content add later", dn and dn.id, args)
     end
 }
 

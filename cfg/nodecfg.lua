@@ -3,31 +3,6 @@ local log = require "util.log"
 local headid_list = {}
 local cfg = {nodes = {}, headid_list = headid_list}
 
---[[node
-id:唯一标识
-enter:进入执行动作
-process:节点中执行动作
-level:节点层级
-
-支持指令
-$randombyweight:随机权重算法
---$roundbyweight:轮循权重算法
-$ret:返回结果
-$go:跳转到节点
-$and:逻辑--且
-$or:逻辑--或
-$if:逻辑--条件二选一
-$not:
-$>:
-$>=:
-$<:
-$<=:
-$><:
-$=><:
-$><=:
-$=><=:
-$==:
-]]
 local function addnode(node)
     cfg.nodes[node.id] = node
     if node.ishead then
@@ -40,6 +15,7 @@ addnode({
 	process = { ["$get"] = { "func", "headaction" } },
     level = 0,
     ishead = true,
+    test = {['$foreach'] = {{ ["$get"] = { "func" } }, "$ret", "$k"}}
 })
 
 --------release
