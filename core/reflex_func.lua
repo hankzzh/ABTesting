@@ -39,6 +39,29 @@ function rfuncs.parse2val(args, dn, user, headid)
     return f(dn, user, headid)
 end
 
+function rfuncs.pcall(tbl, ...)
+	if type(tbl) ~= "table" then
+		return tbl
+	end
+	local replacement = {}
+	for name, args in pairs(tbl) do
+		name = rfuncs.pcall(name)
+		local f = rfuncs.get(name)
+		if f then
+			return f(..., args)
+		else
+			replacement[name] = rfuncs.pcall(args, ...)
+		end
+	end
+	return replacement
+end
+
+function rfuncs.func(tbl)
+	return function (...)
+		return rfuncs.pcall(tbl, ...)
+	end
+end
+
 function rfuncs.parse(valorcfg)
     return function (dn, user, headid)
         if type(valorcfg) ~= "table" then
@@ -46,6 +69,7 @@ function rfuncs.parse(valorcfg)
         end
         local replacement = {}
         for name, args in pairs(valorcfg) do
+			name = rfuncs.parse2val(name, dn, user, headid)
             local f = rfuncs.get(name)
             if f then
                 return f(dn, user, headid, args)
@@ -58,6 +82,8 @@ function rfuncs.parse(valorcfg)
         return replacement
     end
 end
+rfuncs.parse2val = rfuncs.pcall
+rfuncs.parse = rfuncs.func
 
 local REG = rfuncs.register
 
