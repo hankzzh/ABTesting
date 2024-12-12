@@ -25,7 +25,7 @@ addnode({
     level = 100,
 	buckets = { release_1 = 50, release_2 = 50 },
 	--enter = { ["$go"] = { ["$randombyweight"] = { release_1 = 50, release_2 = 150 } } },
-	enter = { ["$get"] = { "func", "enter"} },
+	enter = { ["$get"] = { "func", "enterction" } },
 })
 
 addnode({

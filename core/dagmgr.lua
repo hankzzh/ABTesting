@@ -67,7 +67,7 @@ function dagmgr.process(user)
 	for headid in pairs(dagmgr._cache.nodecfg.headid_list) do
         node = user:get_cur_node(headid)
 		--log("ppppp", node)
-        node:process(user, headid)
+        node.process(nil, user, headid, node)
     end
     
 end

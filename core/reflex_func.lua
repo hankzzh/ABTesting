@@ -28,9 +28,10 @@ function rfuncs.get(name)
     if h.cmd.selfparse then
         return h.func
     end
-    return function (dn, user, headid, args)
+    return function (args, user, headid, dn)
+		--log("ddd", args, dagmgr._package.func)
         args = rfuncs.parse2val(args, dn, user, headid)
-        return h.func(dn, user, headid, args)
+        return h.func(args, user, headid, dn)
     end
 end
 
@@ -48,7 +49,7 @@ function rfuncs.pcall(tbl, ...)
 		name = rfuncs.pcall(name)
 		local f = rfuncs.get(name)
 		if f then
-			return f(..., args)
+			return f(tbl, ...)
 		else
 			replacement[name] = rfuncs.pcall(args, ...)
 		end
@@ -72,7 +73,7 @@ function rfuncs.parse(valorcfg)
 			name = rfuncs.parse2val(name, dn, user, headid)
             local f = rfuncs.get(name)
             if f then
-                return f(dn, user, headid, args)
+                return f(args, user, headid, dn)
                 -- args = rfuncs.parse(args)
                 -- return f(dn, user, args(dn, user))
             else
@@ -89,14 +90,14 @@ local REG = rfuncs.register
 
 REG {
 	cmd = reflex_define.FUNC,
-	func = function(dn, user, headid, args)
+	func = function(args, user, headid, dn)
 		return rfuncs.parse(args)
 	end
 }
 
 REG {
     cmd = reflex_define.FOREACH,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         local param = {['$k'] = 'k', ['$v'] = 'v'}
         if "table" ~= type(args) or #args < 2 then
             log("FOREACH err args", args)
@@ -137,7 +138,7 @@ REG {
 
 REG {
     cmd = reflex_define.AND,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         for _, value in ipairs(args) do
 			value = rfuncs.parse2val(value, dn, user, headid)
             if not value then
@@ -150,7 +151,7 @@ REG {
 
 REG {
     cmd = reflex_define.OR,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         for _, value in ipairs(args) do
 			value = rfuncs.parse2val(value, dn, user, headid)
             if not value then
@@ -162,7 +163,7 @@ REG {
 
 REG {
     cmd = reflex_define.IF,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         if #args ~= 3 then
             return
         end
@@ -180,7 +181,7 @@ REG {
 
 REG {
     cmd = reflex_define.NOT,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         if not args then
             return true
         end
@@ -190,7 +191,7 @@ REG {
 
 REG {
 	cmd = reflex_define.GET,
-	func = function(dn, user, headid, args)
+	func = function(args, user, headid, dn)
 		if not args or not next(args) then
 			return
 		end
@@ -211,7 +212,7 @@ REG {
 
 REG {
 	cmd = reflex_define.SET,
-	func = function(dn, user, headid, args)
+	func = function(args, user, headid, dn)
 		if not args or not next(args) then
 			return
 		end
@@ -232,7 +233,7 @@ REG {
 
 REG {
 	cmd = reflex_define.NODE,
-	func = function(dn, user, headid, args)
+	func = function(args, user, headid, dn)
         --log("node.......", dn, args)
 		if not args or not next(args) then
 			return dn
@@ -250,21 +251,21 @@ REG {
 
 REG {
     cmd = reflex_define.RANDOMBYWEIGHT,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         return util.randombyweight(args)
     end
 }
 
 REG {
     cmd = reflex_define.ROUNDBYWEIGHT,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         return util.randombyweight(args)
     end
 }
 
 REG {
     cmd = reflex_define.GO,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
 		log("gogogogogogogogogogogogogogogogo", args)
         local newnode = dagmgr.get(args)
         user:changenode(headid, dn, newnode)
@@ -273,42 +274,42 @@ REG {
 
 REG {
     cmd = reflex_define.RET,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         log("return at node, content add later", dn and dn.id, args)
     end
 }
 
 REG {
     cmd = reflex_define.GT,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         return args[1] > args[2]
     end
 }
 
 REG {
     cmd = reflex_define.GTE,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         return args[1] >= args[2]
     end
 }
 
 REG {
     cmd = reflex_define.LT,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         return args[1] < args[2]
     end
 }
 
 REG {
     cmd = reflex_define.LTE,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         return args[1] <= args[2]
     end
 }
 
 REG {
     cmd = reflex_define.BTW1,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         local val = rfuncs.parse2val(args[1], dn, user, headid)
         local min = rfuncs.parse2val(args[2], dn, user, headid)
         if val <= min then
@@ -321,7 +322,7 @@ REG {
 
 REG {
     cmd = reflex_define.BTW2,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         local val = rfuncs.parse2val(args[1], dn, user, headid)
         local min = rfuncs.parse2val(args[2], dn, user, headid)
         if val < min then
@@ -334,7 +335,7 @@ REG {
 
 REG {
     cmd = reflex_define.BTW3,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         local val = rfuncs.parse2val(args[1], dn, user, headid)
         local min = rfuncs.parse2val(args[2], dn, user, headid)
         if val <= min then
@@ -347,7 +348,7 @@ REG {
 
 REG {
     cmd = reflex_define.BTW4,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         local val = rfuncs.parse2val(args[1], dn, user, headid)
         local min = rfuncs.parse2val(args[2], dn, user, headid)
         if val < min then
@@ -360,7 +361,7 @@ REG {
 
 REG {
     cmd = reflex_define.EQ,
-    func = function(dn, user, headid, args)
+    func = function(args, user, headid, dn)
         return args[1] == args[2]
     end
 }
