@@ -22,11 +22,16 @@ function stat.print()
         log("times: "..i, cnt)
     end
     local l = {}
+    local strid = "|"
+    local ln = "|"
     for nodeid in pairs(nodes) do
         table.insert(l, nodeid)
+        strid = string.format("%s%20s|", strid, nodeid)
+        ln = string.format("%s%20s|", ln, '--------------------')
     end
-    print("---------------------")
-    print(table.concat(l, '|'))
+    print(ln)
+    print(strid)
+    print(ln)
 
     for headid in pairs(heads) do
         for i_times = 1, #counters do
