@@ -3,6 +3,7 @@ local reflex_define = {
     FUNC = {name = 'func', comment = '函数注册', selfparse = true},
 	FOREACH = { name = 'foreach', comment = '循环编译一个table'},
 	IF = { name = 'if', comment = '逻辑--条件二选一', selfparse = true },
+    --SELFPARSE = {},
 	--PCALL = { name = 'pcall', comment = '逻辑--条件二选一', selfparse = true },
 	--return bool
     AND = {name = 'and', comment = '逻辑--且', selfparse = true},

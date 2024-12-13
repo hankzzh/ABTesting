@@ -70,8 +70,8 @@ function user_meta:set_node_list(headid, from, to)
             return
         end
     end
-    -- self:log("from", from)
-    -- self:log("to", to)
+    self:log("from", from)
+    self:log("to", to)
     local his = self.node_list[headid]
     local node
     for i = #his, 1, -1 do
@@ -96,7 +96,8 @@ function user_meta:changenode(headid, from, to)
     if not self:set_node_list(headid, from, to) then
         return
     end
-    to:enter(self, headid)
+    to.enter(nil, self, headid, to)
+    --to:enter(self, headid)
 end
 
 return user_meta

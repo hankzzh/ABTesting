@@ -1,10 +1,9 @@
 local cjson = require "cjson"
 local log = require "util.log"
 
-local nodes = {}
 local _package = {}
 local _cache = {}
-local dagmgr = {nodes = {}, _package = _package, _cache = _cache}
+local dagmgr = {_package = _package, _cache = _cache}
 
 function dagmgr.print()
 	log("----------------------------------------------------dagmgr.print:----------------------------------------------------")
@@ -16,6 +15,7 @@ function dagmgr.print()
 end
 
 function dagmgr.reload(name, path_name_without_ext)
+	log("reload", name, path_name_without_ext)
 	if not name or not path_name_without_ext then
 		log("dagmgr.reload param", name, path_name_without_ext)
 	end
@@ -33,7 +33,7 @@ function dagmgr.reload(name, path_name_without_ext)
 
 	_cache[name] = content
 	local reflex_func = require "core.reflex_func"
-	_package[name] = reflex_func.parse2val(content)
+	_package[name] = reflex_func.pcall(content)
 	return content
 end
 
@@ -47,27 +47,20 @@ function dagmgr.reload_all()
 	for _, filecfg in ipairs(include) do
 		dagmgr.reload(table.unpack(filecfg))
 	end
-
-    local newnode = {}
-    local dagnode = require "core.dagnode"
-	for id, node in pairs(dagmgr._package.nodecfg.nodes) do
-        newnode[id] = dagnode.new(node)
-    end
-    nodes = newnode
-    dagmgr.nodes = newnode
 end
 
 function dagmgr.get(id)
 	--log("get----------", id, nodes)
-	return nodes[id]
+	return dagmgr._package.nodecfg.nodes[id]
 end
 
 function dagmgr.process(user)
     local node
-	for headid in pairs(dagmgr._cache.nodecfg.headid_list) do
+	for headid in pairs(dagmgr._package.nodecfg.headid_list) do
         node = user:get_cur_node(headid)
-		--log("ppppp", node)
-        node.process(nil, user, headid, node)
+		-- log("ppppp", node)
+        local ret = node.process(nil, user, headid, node)
+		-- log("ppppp node.process result", ret)
     end
     
 end

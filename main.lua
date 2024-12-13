@@ -4,8 +4,8 @@ local log = require "util.log"
 local dagmgr = require "core.dagmgr"
 local stat = require "util.stat"
 
-local USER_NUM = 10
-local RUN_TIMES = 2
+local USER_NUM = 5
+local RUN_TIMES = 1
 
 dagmgr.reload_all()
 log(">>>>>>>>tester begin!!!!")

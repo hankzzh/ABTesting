@@ -3,4 +3,5 @@ return {
 	-- now support json only; maybe xml ... later
 	{"func", "func"},
 	{"nodecfg", "nodecfg"},
+	{"func2node", "func2node"},
 }

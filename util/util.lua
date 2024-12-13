@@ -1,10 +1,10 @@
 local tableutil = require "util.table"
 local util = {}
 
----´«Èë²ÎÊı
--- 1. Êı×é: {{data, weight}, {data, weight}, {data, weight}}
--- 2. ×Öµä£º{"data1": weight, "data2": weight}
--- 3. Ìá¹©wget
+---ä¼ å…¥å‚æ•°
+-- 1. æ•°ç»„: {{data, weight}, {data, weight}, {data, weight}}
+-- 2. å­—å…¸ï¼š{"data1": weight, "data2": weight}
+-- 3. æä¾›wget
 function util.randombyweight(data, wget)
     assert(type(data) == "table")
     local function get_w(v)
@@ -19,7 +19,7 @@ function util.randombyweight(data, wget)
             end
     end
     local totalw = 0
-    -- ¼ÆËãÈ¨ÖØ×ÜºÍ
+    -- è®¡ç®—æƒé‡æ€»å’Œ
     for k, v in pairs(data) do
             totalw = totalw + get_w(v)
     end
@@ -28,7 +28,7 @@ function util.randombyweight(data, wget)
     end
     local randw = math.random(totalw)
     local curw = 0
-    -- ¼ÆËã³öµ±Ç°Öµ
+    -- è®¡ç®—å‡ºå½“å‰å€¼
     for k, v in pairs(data) do
             local w = get_w(v)
             curw = curw + w
