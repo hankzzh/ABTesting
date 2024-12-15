@@ -119,6 +119,41 @@ REG {
 }
 
 REG {
+	cmd = reflex_define.GET,
+	func = function(args, user, headid, dn)
+		if not args or not next(args) then
+			return
+		end
+		local result = dn or dagmgr._package
+		for i, key in ipairs(args) do
+            result = result[key]
+			if not result then
+				return result
+			end
+		end
+		return result
+	end
+}
+
+REG {
+	cmd = reflex_define.NODE,
+	func = function(args, user, headid, dn)
+        -- log("node.......", {args=args, user=user, headid=headid, dn=dn})
+		if not args or not next(args) then
+			return dn
+		end
+		local result = dn
+		for _, key in ipairs(args) do
+			result = result[key]
+			if not result then
+				return result
+			end
+		end
+		return result
+	end
+}
+
+REG {
     cmd = reflex_define.FOREACH,
     func = function(args, user, headid, dn)
         local param = {['$k'] = 'k', ['$v'] = 'v'}
@@ -211,41 +246,6 @@ REG {
         end
         return false
     end
-}
-
-REG {
-	cmd = reflex_define.GET,
-	func = function(args, user, headid, dn)
-		if not args or not next(args) then
-			return
-		end
-		local result = dn or dagmgr._package
-		for i, key in ipairs(args) do
-            result = result[key]
-			if not result then
-				return result
-			end
-		end
-		return result
-	end
-}
-
-REG {
-	cmd = reflex_define.NODE,
-	func = function(args, user, headid, dn)
-        -- log("node.......", {args=args, user=user, headid=headid, dn=dn})
-		if not args or not next(args) then
-			return dn
-		end
-		local result = dn
-		for _, key in ipairs(args) do
-			result = result[key]
-			if not result then
-				return result
-			end
-		end
-		return result
-	end
 }
 
 REG {
