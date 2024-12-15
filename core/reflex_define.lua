@@ -26,10 +26,10 @@ local reflex_define = {
     GTE = {name = '>=', comment = '大于等于'},
     LT = {name = '<', comment = '小于'},
     LTE = {name = '<=', comment = '小于等于'},
-    BTW1 = {name = '><', comment = '开区间', selfparse = true},
-    BTW2 = {name = '=><', comment = '左闭右开区间', selfparse = true},
-    BTW3 = {name = '><=', comment = '左开右闭区间', selfparse = true},
-    BTW4 = {name = '=><=', comment = '闭区间', selfparse = true},
+    BTW1 = {name = '()', comment = '开区间', selfparse = true},
+    BTW2 = {name = '[)', comment = '左闭右开区间', selfparse = true},
+    BTW3 = {name = '(]', comment = '左开右闭区间', selfparse = true},
+    BTW4 = {name = '[]', comment = '闭区间', selfparse = true},
     EQ = {name = '==', comment = '等于'},
 }
 
