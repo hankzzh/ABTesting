@@ -4,13 +4,26 @@ return {
             {
                 ['$getg'] = {"nodecfg", "nodes"}
             },
-            
             {
                 ['$func'] = {
                     ['$if'] = {
-                        ['$eq'] = {
-                            
-                        }
+						{
+							['$and'] = {
+								{
+									['$eq'] = {
+										{ ['$get'] = { '$v', { 'level' } } },
+										100,
+									},
+								},
+								{
+									['$type']
+								}
+							}
+						},
+						{
+							['$set'] = { '$v', { 'enter' }, { ['$getg'] = { "func", "headaction" } } }
+						}
+
                     },
                     ['$set'] = "$2"
                 }
