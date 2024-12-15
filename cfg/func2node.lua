@@ -2,7 +2,7 @@ return {
     level_100_enter = {
         ['$foreach'] = {
             {
-                ['$get'] = {"nodecfg", "nodes"}
+                ['$getg'] = {"nodecfg", "nodes"}
             },
             
             {

@@ -121,12 +121,30 @@ REG {
 REG {
 	cmd = reflex_define.GET,
 	func = function(args, user, headid, dn)
+		if type(args) ~= 'table' or #args < 1 then
+			log("GET param err", args)
+			return
+		end
+		local result = args[1]
+		for i, key in ipairs(args[2] or {}) do
+            result = result[key]
+			if not result then
+				return result
+			end
+		end
+		return result
+	end
+}
+
+REG {
+	cmd = reflex_define.GETG,
+	func = function(args, user, headid, dn)
 		if not args or not next(args) then
 			return
 		end
 		local result = dn or dagmgr._package
 		for i, key in ipairs(args) do
-            result = result[key]
+			result = result[key]
 			if not result then
 				return result
 			end
@@ -180,17 +198,7 @@ REG {
                     newargs[idx] = v
                 end
             end
-            --rfuncs.pcall(f, {k, v}, user, headid, dn)
             f({k, v}, user, headid, dn)
-            -- local tf = type(f)
-            -- --log("00-----0000", {[tf] = newargs})
-            -- if "functions" == tf then
-            --     f(newargs, user, headid, dn)
-            -- elseif "string" == tf then
-            --     rfuncs.pcall({[f] = newargs}, user, headid, dn)
-            -- else
-            --     log("FOREACH err", args)
-            -- end
         end
     end
 }

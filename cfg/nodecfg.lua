@@ -12,11 +12,10 @@ end
 addnode({
     id = "head",
 
-	enter = {["$get"] = { "func", "headaction" }},
-	process = {["$get"] = { "func", "headaction" }},
+	enter = {["$getg"] = { "func", "headaction" }},
+	process = {["$getg"] = { "func", "headaction" }},
     level = 0,
     ishead = true,
-    --test = {['$foreach'] = {{ ["$get"] = { "func" } }, "$ret", "$k"}}
 })
 
 --------release
@@ -25,7 +24,7 @@ addnode({
     id = "release",
     level = 100,
 	buckets = { release_1 = 50, release_2 = 50 },
-	enter = {["$get"] = { "func", "enterction" }},
+	enter = {["$getg"] = { "func", "enterction" }},
 })
 
 addnode({

@@ -13,6 +13,7 @@ local reflex_define = {
     RET = {name = 'ret', comment = '返回结果，失败转备用操作'},
     GO = {name = 'go', comment = '跳转到节点，失败赚到备用节点，再次失败转到上层节点/head'},
 
+	GETG = { name = 'getg', comment = '取任意全局配置数据' },
 	GET = { name = 'get', comment = '取任意配置数据' },
 	SET = { name = 'set', comment = '修改数据' },
 	NODE = { name = 'node', comment = '取任意本节点配置数据活着玩家数据' },

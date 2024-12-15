@@ -5,7 +5,7 @@
     "nodes": {
         "release": {
             "enter": {
-                "$get": [
+                "$getg": [
                     "func",
                     "enter"
                 ]
@@ -20,7 +20,7 @@
         "head": {
             "id": "head",
             "enter": {
-                "$get": [
+                "$getg": [
                     "func",
                     "headaction"
                 ]
@@ -28,7 +28,7 @@
             "ishead": true,
             "level": 0,
             "process": {
-                "$get": [
+                "$getg": [
                     "func",
                     "headaction"
                 ]
