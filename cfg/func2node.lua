@@ -7,7 +7,7 @@ return {
             
             {
                 ['$func'] = {
-                    ['$set'] = "tttttttttttt"
+                    ['$set'] = "$1"
                 }
             }
         }

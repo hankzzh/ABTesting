@@ -53,10 +53,36 @@ function rfuncs.pcall(tbl, ...)
 	return replacement
 end
 
+function rfuncs.mergeArgs(tbl, args)
+    --log("mmmmm", args)
+    local newtbl = {}
+    local t = type(tbl)
+    if "table" ~= t then
+        if "string" ~= t or '$' ~= string.sub(tbl, 1, 1) then
+            return tbl
+        end
+        local i = tonumber(string.sub(tbl, 2))
+        --log("mmmm", i)
+        if "integer" == math.type(i) then
+            return args[i]
+        end
+
+        return tbl
+    end
+    for k, v in pairs(tbl) do
+        local kk = rfuncs.mergeArgs(k, args)
+        local vv = rfuncs.mergeArgs(v, args)
+        newtbl[kk] = vv
+    end
+    return newtbl
+end
+
 function rfuncs.func(tbl, user, headid, dn)
 	return function (args, ...)
-        log("func pcall--", {tbl=tbl, user=user, headid=headid, dn=dn}, {args = args, param = {...}})
-		return rfuncs.pcall(args or tbl, ...)
+        local na = rfuncs.mergeArgs(tbl, args)
+        log("func pcall--", na, {tbl=tbl, user=user, headid=headid, dn=dn}, {args = args, param = {...}})
+		--return rfuncs.pcall(args or tbl, ...)
+		return rfuncs.pcall(na, ...)
 	end
 end
 
@@ -73,8 +99,8 @@ REG {
 REG {
 	cmd = reflex_define.SET,
 	func = function(args, user, headid, dn)
-        log("ssssssssssssssssssssssssssssssss", args, user, headid, dn)
-		if not args or not next(args) then
+        log("ssssssssssssssssssssssssssssssss", {args, user, headid, dn})
+		if true or not args or not next(args) then
 			return
 		end
 		local result
