@@ -246,6 +246,14 @@ REG {
     end
 }
 
+
+REG {
+    cmd = reflex_define.TYPE,
+    func = function(args, user, headid, dn)
+        return type(args)
+    end
+}
+
 REG {
     cmd = reflex_define.NOT,
     func = function(args, user, headid, dn)
@@ -371,6 +379,20 @@ REG {
     cmd = reflex_define.EQ,
     func = function(args, user, headid, dn)
         return args[1] == args[2]
+    end
+}
+
+REG {
+    cmd = reflex_define.NE,
+    func = function(args, user, headid, dn)
+        return args[1] ~= args[2]
+    end
+}
+
+REG {
+    cmd = reflex_define.NULL,
+    func = function(args, user, headid, dn)
+        return args[1] == nil
     end
 }
 

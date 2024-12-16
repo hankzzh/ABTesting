@@ -3,6 +3,7 @@ local reflex_define = {
     FUNC = {name = 'func', comment = '函数注册', selfparse = true},
 	FOREACH = { name = 'foreach', comment = '循环编译一个table'},
 	IF = { name = 'if', comment = '逻辑--条件二选一', selfparse = true },
+    TYPE = { name = 'type', comment = '返回类型'},
     --SELFPARSE = {},
 	--PCALL = { name = 'pcall', comment = '逻辑--条件二选一', selfparse = true },
 	--return bool
@@ -32,6 +33,8 @@ local reflex_define = {
     BTW3 = {name = '(]', comment = '左开右闭区间', selfparse = true},
     BTW4 = {name = '[]', comment = '闭区间', selfparse = true},
     EQ = {name = '==', comment = '等于'},
+    NE = {name = '!=', comment = '不等于'},
+    NULL = {name = 'null', comment = '是否空'},
 }
 
 for k, v in pairs(reflex_define) do
